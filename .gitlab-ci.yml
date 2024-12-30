@@ -1,0 +1,83 @@
+stages:
+  - build_test
+  - build_prod
+  - release
+  - deploy
+  - cleanup
+
+variables:
+  CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME-build-$CI_PIPELINE_ID-$CI_BUILD_REF
+  CONTAINER_PROD_IMAGE: $CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME-build-$CI_PIPELINE_ID-$CI_BUILD_REF
+  CONTAINER_RELEASE_IMAGE_CURRENT: $CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME-b$CI_PIPELINE_ID
+  CONTAINER_RELEASE_IMAGE_STABLE: $CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME
+  CONTAINER_RELEASE_IMAGE_LATEST: $CI_REGISTRY_IMAGE:latest
+
+build_test:
+  stage: build_test
+  tags:
+    - dind
+  script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+    - docker build --pull -t $CONTAINER_TEST_IMAGE --target production code
+    - docker run -e ENV=test $CONTAINER_TEST_IMAGE ./test.sh
+
+build_prod:
+  stage: build_prod
+  tags:
+    - dind
+  only:
+    - master
+    - tags
+  script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+    - docker build -t $CONTAINER_PROD_IMAGE code
+
+release_current:
+  stage: release
+  tags:
+    - dind
+  only:
+    - master
+  script:
+    - docker tag $CONTAINER_PROD_IMAGE $CONTAINER_RELEASE_IMAGE_CURRENT
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+    - docker push $CONTAINER_RELEASE_IMAGE_CURRENT
+
+release_stable:
+  stage: release
+  tags:
+    - dind
+  only:
+    - tags
+  script:
+    - docker tag $CONTAINER_PROD_IMAGE $CONTAINER_RELEASE_IMAGE_STABLE
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+    - docker push $CONTAINER_RELEASE_IMAGE_STABLE
+
+deploy_stable:
+  stage: deploy
+  image: cdrx/rancher-gitlab-deploy
+  variables:
+    RANCHER_URL: http://rancher.vpn:8080
+    RANCHER_ACCESS_KEY: 790F7845741401F022C7
+    RANCHER_SECRET_KEY: ADxZBCG9WoQb49rXiUMjpVbCEWoNv7uDu1CEz2Ch
+  only:
+    - tags
+  script:
+    - upgrade
+        --rancher-url $RANCHER_URL
+        --rancher-key $RANCHER_ACCESS_KEY
+        --rancher-secret $RANCHER_SECRET_KEY
+        --environment Default
+        --stack SpeedVacanze
+        --service datawarehouse
+        --new-image $CONTAINER_RELEASE_IMAGE_STABLE
+  environment: production
+
+cleanup:
+  stage: cleanup
+  tags:
+    - dind
+  when: always
+  script:
+    - docker rmi -f $CONTAINER_TEST_IMAGE $CONTAINER_PROD_IMAGE $CONTAINER_RELEASE_IMAGE_CURRENT $CONTAINER_RELEASE_IMAGE_STABLE || true

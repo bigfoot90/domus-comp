@@ -1,0 +1,61 @@
+{
+    "type": "project",
+    "license": "proprietary",
+    "require": {
+        "php": "^8.2",
+        "symfony/console": "^7.0",
+        "symfony/css-selector": "^7.0",
+        "symfony/dependency-injection": "^7.0",
+        "symfony/dom-crawler": "^7.0",
+        "symfony/flex": "*",
+        "symfony/framework-bundle": "^7.0",
+        "symfony/http-client": "^7.0",
+        "symfony/monolog-bundle": "*",
+        "symfony/twig-bundle": "^7.0",
+        "symfony/yaml": "^7.0",
+        "twig/twig": "^3.9"
+    },
+    "require-dev": {
+        "symfony/dotenv": "*",
+        "symfony/stopwatch": "*",
+        "symfony/web-profiler-bundle": "*"
+    },
+    "config": {
+        "preferred-install": {
+            "*": "dist"
+        },
+        "sort-packages": true,
+        "allow-plugins": {
+            "symfony/flex": true
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "App\\": "tests/"
+        }
+    },
+    "scripts": {
+        "auto-scripts": {
+            "cache:clear": "symfony-cmd"
+        },
+        "post-install-cmd": [
+            "@auto-scripts"
+        ],
+        "post-update-cmd": [
+            "@auto-scripts"
+        ]
+    },
+    "minimum-stability": "dev",
+    "prefer-stable" : true,
+    "extra": {
+        "symfony": {
+            "allow-contrib": true,
+            "require": "7.0.*"
+        }
+    }
+}

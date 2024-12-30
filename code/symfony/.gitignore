@@ -1,0 +1,23 @@
+###> symfony/framework-bundle ###
+.env.local
+.php-cs-fixer.cache
+.phpunit.result.cache
+/public/bundles/
+/var/
+/vendor/
+###< symfony/framework-bundle ###
+
+###> symfony/web-server-bundle ###
+.web-server-pid
+###< symfony/web-server-bundle ###
+
+/data/
+!/data/examples
+/node_modules/
+/public/assets/vendor/
+/yarn-error.log
+
+###> phpunit/phpunit ###
+/phpunit.xml
+.phpunit.result.cache
+###< phpunit/phpunit ###

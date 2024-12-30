@@ -1,0 +1,7 @@
+services:
+  code:
+    build:
+      context: code
+      target: development
+    volumes:
+      - ./code/symfony:/srv

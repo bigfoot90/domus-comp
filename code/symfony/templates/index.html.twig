@@ -1,0 +1,229 @@
+{% extends 'layout.html.twig' %}
+
+{% block body %}
+  <div class="mappa" style="width: 800px; margin: 50px auto;">
+    <div id="map"></div>
+  </div>
+
+  <table width="100%" border="1" cellspacing="0" cellpadding="4">
+    <thead>
+    <tr>
+      <th>Contratto</th>
+      <th id="name">Nome</th>
+      {# <th>Tipologia</th>
+                <th>Contratto</th> #}
+      <th>Anno</th>
+      <th>Sup</th>
+      <th>Locali</th>
+      <th>Prezzo</th>
+      {# <th>Prezzo Superficie</th> #}
+      <th>Diritto di sup</th>
+      <th>Doppi servizi</th>
+      <th>Doppia esp</th>
+      <th>Balcone</th>
+      <th>Terrazza</th>
+      <th>Giardino</th>
+      {# <th>Ascensore</th>
+                <th>Piano</th>
+                <th>Riscaldamento</th> #}
+      {# <th>Aria cond</th> #}
+      {# <th>Cucina abitabile</th> #}
+      {# <th>Arredato</th> #}
+      <th>Box auto</th>
+      {# <th>Cantina</th> #}
+      {# <th>VCit</th> #}
+      <th>Classe</th>
+      <th>Galleria</th>
+      <th>Planimetria</th>
+      <th>Mappa</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for index,item in catalog %}
+      <tr>
+        <td>
+          {{ item.contract }}<br>
+          {{ item.company }}
+        </td>
+        <td>
+          <a href="{{ item.url }}" target="_blank">
+            {{ item.name }}
+          </a>
+        </td>
+        {# <td>{{ item.contratto }}</td>
+                <td>{{ item.tipologia }}</td> #}
+        <td class="text-right">{{ item.buildYear }}</td>
+        <td class="text-right">{{ item.surface }}m<sup>2</sup></td>
+        <td class="text-center">{{ item.rooms }}</td>
+        <td class="text-right">
+          <nobr>€ {{ item.price | number_format(0, ',', ' ') }}</nobr>
+        </td>
+        {# <td class="text-right"><nobr>{{ (item.price / item.superficie) | number_format(0, ',', ' ') }} €/m<sup>2</sup></nobr></td> #}
+        <td class="text-center">{{ item.dirittoSuperficie | yesno }}</td>
+        <td class="text-center">{{ item.doppiServizi | yesno }}</td>
+        <td class="text-center">{{ item.doppiaEsposizione | yesno }}</td>
+        <td class="text-center">{{ item.balcony | yesno }}</td>
+        <td class="text-center">{{ item.terrace | yesno }}</td>
+        <td class="text-center">{{ item.garden | yesno }}</td>
+        {# <td class="text-center">{{ item.lift | yesno }}</td> #}
+        {# <td class="text-center">{{ item.floor }}</td> #}
+        {# <td class="text-center">{{ item.riscaldamento }}</td> #}
+        {# <td class="text-center">{{ item.ariaCondizionata | yesno }}</td> #}
+        {# <td class="text-center">{{ item.cucinaAbitabile | yesno }}</td> #}
+        {# <td class="text-center">{{ item.arredato | yesno }}</td> #}
+        <td class="text-center">{{ item.boxAuto | yesno }}</td>
+        {# <td class="text-center">{{ item.basement | yesno }}</td> #}
+        {# <td class="text-center">{{ item.videocitofono | yesno }}</td> #}
+        {% if markers|length %}
+          <td class="text-center">
+            <span class="energy-cert" grade="{{ item.energyCertification|lower }}">{{ item.energyCertification }}</span>
+          </td>
+        {% else %}
+          <td class="text-center text-disabled">--</td>
+        {% endif %}
+        <td>
+          <div class="gallery" style="width: 250px;">
+            {% for ip,photo in item.gallery %}
+              (<a href="{{ photo }}" target="_blank">{{ ip+1 }}</a>)
+            {% endfor %}
+          </div>
+        </td>
+        <td class="text-center">
+          <div class="floor-plans" style="width: 100px;">
+            {% for ip,plan in item.floorPlans %}
+              (<a href="{{ plan }}" target="_blank">{{ ip+1 }}</a>)
+            {% endfor %}
+          </div>
+
+          {% if item.virtualTour %}
+            <a href="{{ item.virtualTour }}" target="_blank">Virtual tour</a>
+          {% endif %}
+        </td>
+        <td class="text-center">
+          {% if item.coordinates %}
+            <div class="map">
+              <a href="https://www.google.com/maps/search/?api=1&query={{ item.coordinates['latitude'] }},{{ item.coordinates['longitude'] }}" target="_blank">
+                <img width="50" src="https://maps.googleapis.com/maps/api/staticmap?size=200x200&zoom=14&scale=1&style=feature:administrative|element:labels.text.fill|color:0x444444&style=feature:administrative.neighborhood|element:all|visibility:on|weight:0.01&style=feature:landscape|element:all|color:0xf2f2f2|visibility:off&style=feature:poi|element:all|visibility:off&style=feature:poi.medical|element:all|visibility:on|saturation:-50|color:0xe0503a|lightness:48&style=feature:poi.medical|element:labels|visibility:on&style=feature:poi.medical|element:labels.text|visibility:on&style=feature:poi.medical|element:labels.text.fill|visibility:on|color:0x435363|weight:1.88&style=feature:poi.medical|element:labels.text.stroke|visibility:off&style=feature:poi.medical|element:labels.icon|weight:0.01|color:0xefa499|visibility:on&style=feature:poi.school|element:geometry.fill|visibility:off|color:0xff0000&style=feature:road|element:all|saturation:-100|lightness:45&style=feature:road.highway|element:all|visibility:simplified&style=feature:road.arterial|element:labels.icon|visibility:off&style=feature:transit|element:all|visibility:on|saturation:-48&style=feature:water|element:all|color:0x818994|visibility:on&format=jpg&maptype=roadmap&key=AIzaSyBCXXCrJBq7vjmru_4c3BSDNniCH2MviF4&markers=size:normal%7Ccolor:0x9E1DBA%7Clabel:1%7C{{ item.coordinates['latitude'] }},{{ item.coordinates['longitude'] }}"/>
+              </a>
+            </div>
+          {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
+
+{% block stylesheets %}
+  {{ parent() }}
+
+  <link rel="stylesheet" href="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.3.0/css/ol.css" type="text/css">
+  <style lang="css">
+      * {
+          ---bs-body-font-size: 10px;
+      }
+
+      html,body { padding: 0; margin: 0px; }
+
+      #name { width: 100px; }
+
+      .text-green { color: green; }
+      .text-red { color: red; }
+
+      .energy-cert { color: white; display: inline-block; width: 20px; }
+      .energy-cert[grade=a] { background: #007b39; }
+      .energy-cert[grade=b] { background: #67b550; }
+      .energy-cert[grade=c] { background: #92c037; }
+      .energy-cert[grade=d] { background: #d1d71d; }
+      .energy-cert[grade=e] { background: #e0ac24; }
+      .energy-cert[grade=f] { background: #cc5e0b; }
+      .energy-cert[grade=g] { background: #c01a1b; }
+  </style>
+
+  <link href="https://cdn.jsdelivr.net/npm/nanogallery2@3/dist/css/nanogallery2.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block javascrpts %}
+  {{ parent() }}
+
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+
+  {% if markers|length %}
+    <script src="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.3.0/build/ol.js"></script>
+    <script>
+      const markers = {{ markers|json_encode|raw }};
+
+      // Inizio Script per OpenSteet Map
+      const iconLayerSource = new ol.source.Vector({
+        features: markers.map((item) => new ol.Feature({
+          geometry: new ol.geom.Point(ol.proj.fromLonLat([item.long, item.lat]),),
+          name: item.name,
+        }))
+      });
+
+      const iconLayer = new ol.layer.Vector({
+        source: iconLayerSource,
+        // style for all elements on a layer
+        style: new ol.style.Style({
+          image: new ol.style.Icon({
+            scale: .5,
+            anchor: [0.5, 82],
+            anchorXUnits: 'fraction',
+            anchorYUnits: 'pixels',
+            src: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png'
+          })
+        })
+      });
+
+      const map = new ol.Map({
+        controls: ol.control.defaults().extend([
+          new ol.control.FullScreen()
+        ]),
+        target: 'map',
+        layers: [
+          new ol.layer.Tile({
+            source: new ol.source.OSM(),
+          }),
+          iconLayer
+        ],
+        view: new ol.View({
+          //center: ol.proj.fromLonLat([{{ markers[0].long }}, {{ markers[0].lat }}]),
+          zoom: 12,
+          maxZoom: 17,
+        })
+      });
+      map.getView().fit(iconLayerSource.getExtent());
+    </script>
+  {% endif %}
+
+  <script src="https://cdn.jsdelivr.net/npm/nanogallery2@3/dist/jquery.nanogallery2.min.js"></script>
+  <script>
+    $(() => {
+      $('.gallery').each((index, value) => {
+        const images = $.map($(value).find('a'), (el) => ({
+          src: $(el).attr('href'),
+          hidden: true
+        }));
+
+        $(value).nanogallery2({
+          thumbnailHeight: 50,
+          thumbnailWidth: 50,
+          items: images
+        });
+      })
+
+      $('.floor-plans').each((index, value) => {
+        const images = $.map($(value).find('a'), (el) => ({
+          src: $(el).attr('href'),
+          hidden: true
+        }));
+
+        $(value).nanogallery2({
+          thumbnailHeight: 100,
+          thumbnailWidth: 100,
+          items: images
+        });
+      })
+    });
+  </script>
+{% endblock %}

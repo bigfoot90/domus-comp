@@ -1,0 +1,11 @@
+/symfony/app/config/parameters.yml
+/symfony/bin/*
+!/symfony/bin/console
+/symfony/node_modules/
+/symfony/var/*
+!/symfony/var/.gitkeep
+/symfony/vendor/
+/symfony/public/assets/vendor/
+/symfony/yarn-error.log
+/symfony/.php_cs.cache
+/symfony/cs_fixer_tmp_*

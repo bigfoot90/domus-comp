@@ -1,0 +1,15 @@
+version: '2'
+
+
+services:
+  code:
+    build:
+      args:
+        USERID: 1000
+    environment:
+      MAILER_FORCE_ADDRESS: 'dwh@localhost'
+    volumes:
+      - ~/.composer:/home/www-data/.composer
+      - ~/.yarn:/home/www-data/.yarn
+    ports:
+      - 80:8000
