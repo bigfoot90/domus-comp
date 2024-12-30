@@ -1,6 +1,10 @@
 {% extends 'layout.html.twig' %}
 
 {% block body %}
+  <div id="root">
+    Loading... <i class="fas fa-cog fa-spin fa-3x"></i>
+  </div>
+
   <div class="mappa" style="width: 800px; margin: 50px auto;">
     <div id="map"></div>
   </div>
@@ -141,10 +145,14 @@
   </style>
 
   <link href="https://cdn.jsdelivr.net/npm/nanogallery2@3/dist/css/nanogallery2.min.css" rel="stylesheet">
+
+  {{ encore_entry_link_tags('app') }}
 {% endblock %}
 
-{% block javascrpts %}
+{% block javascripts %}
   {{ parent() }}
+
+  {{ encore_entry_script_tags('app') }}
 
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
 

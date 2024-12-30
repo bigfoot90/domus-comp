@@ -15,9 +15,17 @@
 !/data/examples
 /node_modules/
 /public/assets/vendor/
+/public/build/
 /yarn-error.log
 
 ###> phpunit/phpunit ###
 /phpunit.xml
 .phpunit.result.cache
 ###< phpunit/phpunit ###
+
+###> symfony/webpack-encore-bundle ###
+/node_modules/
+/public/build/
+npm-debug.log
+yarn-error.log
+###< symfony/webpack-encore-bundle ###

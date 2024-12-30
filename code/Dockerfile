@@ -3,7 +3,7 @@ FROM docker.vpn/bestnetwork/docker-php:8.3-dev as development
 USER root
 
 # Install NodeJS and node modules
-RUN apk --update add nodejs yarn
+RUN apk --update add nodejs npm
 
 # Start
 USER www-data

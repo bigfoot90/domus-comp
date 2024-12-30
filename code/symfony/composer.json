@@ -12,6 +12,8 @@
         "symfony/http-client": "^7.0",
         "symfony/monolog-bundle": "*",
         "symfony/twig-bundle": "^7.0",
+        "symfony/ux-react": "^2.22",
+        "symfony/webpack-encore-bundle": "^2.2",
         "symfony/yaml": "^7.0",
         "twig/twig": "^3.9"
     },
